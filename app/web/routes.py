@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import inspect
@@ -13,6 +14,26 @@ router = APIRouter(prefix="/ui", tags=["ui"])
 
 templates_dir = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(templates_dir))
+
+
+def parse_claims(value: str | None) -> list[str]:
+    if not value:
+        return []
+
+    try:
+        parsed = json.loads(value)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        parsed = None
+
+    if isinstance(parsed, list):
+        return [str(item).strip() for item in parsed if str(item).strip()]
+    if isinstance(parsed, str):
+        parsed = parsed.strip()
+        return [parsed] if parsed else []
+
+    fallback = str(value).strip()
+    return [fallback] if fallback else []
+
 
 def render_template(request: Request, name: str, context: dict) -> HTMLResponse:
     template_response = templates.TemplateResponse
@@ -39,7 +60,14 @@ def ui_info_clusters(request: Request, db: Session = Depends(get_db)) -> HTMLRes
             }
         )
     for a in unclustered_articles:
-        items.append({"kind": "article", "date": a.published_at, "obj": a})
+        items.append(
+            {
+                "kind": "article",
+                "date": a.published_at,
+                "obj": a,
+                "claims_display": parse_claims(a.claims),
+            }
+        )
     items.sort(key=lambda x: x["date"] or 0, reverse=True)
 
     return render_template(request, "pages/info_clusters.html", {"request": request, "items": items})
@@ -53,8 +81,15 @@ def ui_info_cluster_articles_fragment(
     if not cluster:
         raise HTTPException(status_code=404, detail="InfoCluster not found")
     articles = query.get_articles_for_info_cluster(cluster_id, db)
+    articles_view = [
+        {
+            "obj": article,
+            "claims_display": parse_claims(article.claims),
+        }
+        for article in articles
+    ]
     return render_template(
         request,
         "partials/cluster_articles.html",
-        {"request": request, "cluster": cluster, "articles": articles},
+        {"request": request, "cluster": cluster, "articles": articles_view},
     )

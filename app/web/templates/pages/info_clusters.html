@@ -47,64 +47,81 @@
             </details>
           {% else %}
             {% set a = item.obj %}
-            <details class="cluster cluster--article">
-              <summary class="cluster__summary">
-                <div class="cluster__head">
-                  {% if a.img %}
-                    <img class="thumb" src="{{ a.img }}" alt="" loading="lazy" />
-                  {% else %}
-                    <div class="thumb thumb--placeholder" aria-hidden="true"></div>
-                  {% endif %}
-                  <div class="cluster__headtext">
-                    <div class="cluster__title">{{ a.summary_title or a.title or ("Artykuł #" ~ a.id) }}</div>
-                    <div class="cluster__meta">
-                      <span class="pill pill--article">Unclustered Article</span>
-                      {% if a.published_at %}<span>· {{ a.published_at }}</span>{% endif %}
-                      {% if a.source %}<span>· {{ a.source }}</span>{% endif %}
+            {% set claims_display = item.claims_display or [] %}
+            <div class="article-row">
+              <details class="cluster cluster--article">
+                <summary class="cluster__summary">
+                  <div class="cluster__head">
+                    {% if a.img %}
+                      <img class="thumb" src="{{ a.img }}" alt="" loading="lazy" />
+                    {% else %}
+                      <div class="thumb thumb--placeholder" aria-hidden="true"></div>
+                    {% endif %}
+                    <div class="cluster__headtext">
+                      <div class="cluster__title">{{ a.summary_title or a.title or ("Artykuł #" ~ a.id) }}</div>
+                      <div class="cluster__meta">
+                        <span class="pill pill--article">Unclustered Article</span>
+                        {% if a.published_at %}<span>· {{ a.published_at }}</span>{% endif %}
+                        {% if a.source %}<span>· {{ a.source }}</span>{% endif %}
+                      </div>
                     </div>
                   </div>
+                  <div class="cluster__summarysplit">
+                    <div class="cluster__summarymain">
+                      {% if a.summary_pl %}
+                        <div class="cluster__summarytext">{{ a.summary_pl }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </summary>
+                <div
+                  class="cluster__body article--detail"
+                  data-tts-item
+                  data-tts-title="{{ (a.summary_title or a.title or ('Artykuł #' ~ a.id)) | e }}"
+                  data-tts-text="{{ (a.summary_pl or a.summary_eng or '') | e }}"
+                >
+                  {% if a.url %}
+                    <a href="{{ a.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
+                  {% endif %}
+                  <button
+                    class="icon-button"
+                    type="button"
+                    data-tts-button
+                    data-tts-state="idle"
+                    aria-label="Odczytaj artykuł"
+                    title="Odczytaj artykuł"
+                  >
+                    <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                    <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                      <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
+                    </svg>
+                  </button>
+                  <button
+                    class="icon-button"
+                    type="button"
+                    data-tts-stop
+                    aria-label="Zatrzymaj czytanie"
+                    title="Zatrzymaj czytanie"
+                  >
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6h12v12H6z"></path>
+                    </svg>
+                  </button>
                 </div>
-                {% if a.summary_pl %}
-                  <div class="cluster__summarytext">{{ a.summary_pl }}</div>
-                {% endif %}
-              </summary>
-              <div
-                class="cluster__body article--detail"
-                data-tts-item
-                data-tts-title="{{ (a.summary_title or a.title or ('Artykuł #' ~ a.id)) | e }}"
-                data-tts-text="{{ (a.summary_pl or a.summary_eng or '') | e }}"
-              >
-                {% if a.url %}
-                  <a href="{{ a.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
-                {% endif %}
-                <button
-                  class="icon-button"
-                  type="button"
-                  data-tts-button
-                  data-tts-state="idle"
-                  aria-label="Odczytaj artykuł"
-                  title="Odczytaj artykuł"
-                >
-                  <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 5v14l11-7z"></path>
-                  </svg>
-                  <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
-                    <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
-                  </svg>
-                </button>
-                <button
-                  class="icon-button"
-                  type="button"
-                  data-tts-stop
-                  aria-label="Zatrzymaj czytanie"
-                  title="Zatrzymaj czytanie"
-                >
-                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6h12v12H6z"></path>
-                  </svg>
-                </button>
-              </div>
-            </details>
+              </details>
+              {% if claims_display %}
+                <aside class="article__claims" aria-label="Claims">
+                  <div class="article__claims-title">fakty</div>
+                  <ul class="article__claims-list">
+                    {% for claim in claims_display %}
+                      <li>{{ claim }}</li>
+                    {% endfor %}
+                  </ul>
+                </aside>
+              {% endif %}
+            </div>
           {% endif %}
         {% endfor %}
       </div>
