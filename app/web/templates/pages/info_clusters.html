@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Fast Info · News{% endblock %}
+
+{% block content %}
+  <section class="stack">
+    <div class="row row--space">
+      <h1>Fast Info</h1>
+      <div class="muted">Sortowanie: najnowsze</div>
+    </div>
+
+    {% if items %}
+      <div class="clusters">
+        {% for item in items %}
+          {% if item.kind == "cluster" %}
+            {% set c = item.obj %}
+            <details class="cluster">
+              <summary class="cluster__summary">
+                <div class="cluster__head">
+                  {% if item.thumb_url %}
+                    <img class="thumb" src="{{ item.thumb_url }}" alt="" loading="lazy" />
+                  {% else %}
+                    <div class="thumb thumb--placeholder" aria-hidden="true"></div>
+                  {% endif %}
+                  <div class="cluster__headtext">
+                    <div class="cluster__title">{{ c.title or ("Cluster #" ~ c.id) }}</div>
+                    <div class="cluster__meta">
+                      <span class="pill pill--cluster">InfoCluster</span>
+                      <span class="pill pill--count">{{ item.articles_count }} artykułów</span>
+                      {% if c.updated_at %}<span>· {{ c.updated_at }}</span>{% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% if c.summary %}
+                  <div class="cluster__summarytext">{{ c.summary }}</div>
+                {% endif %}
+              </summary>
+              <div
+                class="cluster__body"
+                id="cluster-{{ c.id }}-body"
+                hx-get="/ui/infos/{{ c.id }}/articles"
+                hx-trigger="revealed"
+                hx-target="#cluster-{{ c.id }}-body"
+                hx-swap="innerHTML"
+              >
+                <div class="muted">Ładowanie artykułów...</div>
+              </div>
+            </details>
+          {% else %}
+            {% set a = item.obj %}
+            <details class="cluster cluster--article">
+              <summary class="cluster__summary">
+                <div class="cluster__head">
+                  {% if a.img %}
+                    <img class="thumb" src="{{ a.img }}" alt="" loading="lazy" />
+                  {% else %}
+                    <div class="thumb thumb--placeholder" aria-hidden="true"></div>
+                  {% endif %}
+                  <div class="cluster__headtext">
+                    <div class="cluster__title">{{ a.summary_title or a.title or ("Artykuł #" ~ a.id) }}</div>
+                    <div class="cluster__meta">
+                      <span class="pill pill--article">Unclustered Article</span>
+                      {% if a.published_at %}<span>· {{ a.published_at }}</span>{% endif %}
+                      {% if a.source %}<span>· {{ a.source }}</span>{% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% if a.summary_pl %}
+                  <div class="cluster__summarytext">{{ a.summary_pl }}</div>
+                {% endif %}
+              </summary>
+              <div
+                class="cluster__body article--detail"
+                data-tts-item
+                data-tts-title="{{ (a.summary_title or a.title or ('Artykuł #' ~ a.id)) | e }}"
+                data-tts-text="{{ (a.summary_pl or a.summary_eng or '') | e }}"
+              >
+                {% if a.url %}
+                  <a href="{{ a.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
+                {% endif %}
+                <button
+                  class="icon-button"
+                  type="button"
+                  data-tts-button
+                  data-tts-state="idle"
+                  aria-label="Odczytaj artykuł"
+                  title="Odczytaj artykuł"
+                >
+                  <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"></path>
+                  </svg>
+                  <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                    <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
+                  </svg>
+                </button>
+                <button
+                  class="icon-button"
+                  type="button"
+                  data-tts-stop
+                  aria-label="Zatrzymaj czytanie"
+                  title="Zatrzymaj czytanie"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6h12v12H6z"></path>
+                  </svg>
+                </button>
+              </div>
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">Brak rekordów.</div>
+    {% endif %}
+  </section>
+{% endblock %}

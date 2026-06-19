@@ -1,0 +1,5 @@
+Creating infos jobs flow:
+
+1. articles/ingest  -> hits rrs for getting articles, then gets content of articles, shots ai to create summary etc
+2. embed/embed  -> embedding articles in database
+3. infos/process_info_clusters -> groups articles
