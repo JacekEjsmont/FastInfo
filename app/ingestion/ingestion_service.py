@@ -11,7 +11,7 @@ def ingest_articles():
     print("fetching articles...")
     rss_articles = fetch_rss_articles()
 
-    print("ai processing...")
+    print("ai summarizing processing...")
     for item in rss_articles:
         exists = db.query(Article).filter(Article.url == item["url"]).first()
         if exists:
@@ -41,6 +41,5 @@ def ingest_articles():
             uncertainties=json.dumps(article_ai_data.get("uncertainties")),
         )
         db.add(article)
-
     db.commit()
     db.close()

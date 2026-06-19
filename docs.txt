@@ -1,5 +1,8 @@
-Creating infos jobs flow:
+Launch app with uvicorn app.main:app --reload
 
-1. articles/ingest  -> hits rrs for getting articles, then gets content of articles, shots ai to create summary etc
-2. embed/embed  -> embedding articles in database
-3. infos/process_info_clusters -> groups articles
+
+Creating infos jobs flow:
+1. articles/ingest  -> hits rrs for getting articles, then gets content of articles, shots ai to create summary etc     curl.exe -X POST "http://127.0.0.1:8000/articles/ingest" ` -H "Content-Type: application/json"
+2. embed/embed  -> embedding articles in database                                                                       curl.exe -X POST "http://127.0.0.1:8000/embed/embed" ` -H "Content-Type: application/json"
+3. infos/process_info_clusters -> groups articles                                                                       curl.exe -X POST "http://127.0.0.1:8000/infos/process_info_clusters" ` -H "Content-Type: application/json"
+job/run_add_articles_and_clusters ->  job which automatically runs tasks 1. 2. 3.                                       curl.exe -X POST "http://127.0.0.1:8000/job/run_add_articles_and_clusters" ` -H "Content-Type: application/json"

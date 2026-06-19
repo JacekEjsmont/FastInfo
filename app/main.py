@@ -10,7 +10,6 @@ print("Launching app!!!!!!!!")
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
-
 app.include_router(articles.router)
 app.include_router(info_clusters.router)
 app.include_router(embed.router)
@@ -23,8 +22,5 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 @app.get("/")
 def root():
     return {"status": "ok"}
-
-# odpal z uvicorn app.main:app --reload
-# POST /articles/ingest
 
 

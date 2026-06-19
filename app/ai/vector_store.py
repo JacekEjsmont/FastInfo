@@ -3,12 +3,14 @@ from app.ai.embeddings import embed_text, embed_tags
 from app.db import query
 
 client = chromadb.PersistentClient(path="/chromaDatabase")
-# client.delete_collection(name="articles")
-# client.delete_collection(name="articles_summary")
-# client.delete_collection(name="articles_tags")
 collection_by_summary = client.get_or_create_collection(name="articles_summary")
 collection_by_tags = client.get_or_create_collection(name="articles_tags")
 old_collection = client.get_or_create_collection(name="articles")
+
+def delete_all_collections():
+    client.delete_collection(name="articles")
+    client.delete_collection(name="articles_summary")
+    client.delete_collection(name="articles_tags")
 
 def add_embedding_by_summary(article_id: int, embedding, metadata: dict):
     collection_by_summary.add(

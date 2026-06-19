@@ -1,6 +1,5 @@
 from transformers import AutoTokenizer, MarianMTModel
 
-
 def split_without_breaking_words(text, max_length=15):
     words = text.split()
     chunks = []
@@ -19,6 +18,7 @@ def split_without_breaking_words(text, max_length=15):
         chunks.append(current_chunk)
 
     return chunks
+
 
 model_name_translate = "allegro/BiDi-eng-pol"
 tokenizer = AutoTokenizer.from_pretrained(model_name_translate)

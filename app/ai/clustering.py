@@ -26,26 +26,3 @@ def cluster_by_similarity(embeddings, ids, threshold=0.35):
             clusters.append([(article_id, emb)])
 
     return clusters
-
-
-# from scipy.spatial import distance
-#
-# def cluster_by_similarity(embeddings, ids, threshold=0.25):
-#     clusters = []
-#
-#     for index, emb in enumerate(embeddings):
-#         article_id = ids[index]
-#         added = False
-#
-#         for cluster in clusters:
-#             dist = distance.cosine(emb, cluster[0])
-#
-#             if dist < threshold:
-#                 cluster.append(emb)
-#                 added = True
-#                 break
-#
-#         if not added:
-#             clusters.append([emb])
-#
-#     return clusters

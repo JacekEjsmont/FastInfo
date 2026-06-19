@@ -1,9 +1,9 @@
+import sqlite3
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 from app.db.models import Article, InfoCluster, info_clusters_articles
 from app.db.database import SessionLocal, delete
 from app.ai import vector_store
-
 
 def get_all_articles(db: Session):
     q = db.query(Article)
@@ -34,10 +34,8 @@ def delete_where_claims_empty():
     db.commit()
     db.close()
 
-
 def get_all_info_clusters(db: Session):
     return db.query(InfoCluster).filter(InfoCluster.id.isnot(None)).all()
-
 
 def get_info_clusters_recent(db: Session):
     return (
@@ -46,7 +44,6 @@ def get_info_clusters_recent(db: Session):
         .order_by(desc(InfoCluster.updated_at))
         .all()
     )
-
 
 def get_info_clusters_recent_with_counts(db: Session):
     thumb_subq = (
@@ -79,10 +76,8 @@ def get_info_cluster_by_id(info_cluster_id: int, db: Session):
     info_cluster = db.get(InfoCluster, info_cluster_id)
     return info_cluster.articles if info_cluster else []
 
-
 def get_info_cluster_model_by_id(info_cluster_id: int, db: Session):
     return db.get(InfoCluster, info_cluster_id)
-
 
 def get_articles_for_info_cluster(info_cluster_id: int, db: Session):
     return (
@@ -93,7 +88,6 @@ def get_articles_for_info_cluster(info_cluster_id: int, db: Session):
         .all()
     )
 
-
 def get_articles_without_info_cluster(db: Session):
     return (
         db.query(Article)
@@ -102,32 +96,9 @@ def get_articles_without_info_cluster(db: Session):
         .all()
     )
 
-# import sqlite3 example of conneting to sqlite
-#
-# conn = sqlite3.connect('news.bd')
-# c = conn.cursor()
-#
-# c.execute('''
-#           ALTER TABLE articles
-#           ADD summary_pl TEXT,
-#           summary_eng TEXT;
-#           ''')
-#
-# conn.commit()
-
-
-
-# ------------------------------------
-# import sqlite3
-#
-# conn = sqlite3.connect('news.db')
-# c = conn.cursor()
-# c.execute('''ALTER TABLE articles ADD actors TEXT;''')
-# c.execute('''ALTER TABLE articles ADD locations TEXT;''')
-# c.execute('''ALTER TABLE articles ADD topic TEXT;''')
-# c.execute('''ALTER TABLE articles ADD claims TEXT;''')
-# c.execute('''ALTER TABLE articles ADD uncertainties TEXT;''')
-# c.execute('''ALTER TABLE articles ADD summary_title TEXT;''')
-# c.execute('''ALTER TABLE articles ADD img TEXT;''')
-# conn.commit()
-# ---------------------------------------
+def execute_query(query: str):
+    conn = sqlite3.connect('news.db')
+    c = conn.cursor()
+    c.execute(query)
+    conn.commit()
+    conn.close()

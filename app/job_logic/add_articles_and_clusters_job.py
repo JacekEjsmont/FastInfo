@@ -1,7 +1,5 @@
 import os
-
 import requests
-
 
 def run_add_articles_and_clusters_job() -> dict[str, object]:
     base_url = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
