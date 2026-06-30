@@ -25,6 +25,8 @@ tokenizer = AutoTokenizer.from_pretrained(model_name_translate)
 model_translation = MarianMTModel.from_pretrained(model_name_translate)
 def translate_text(text: str):
     """Detects language and translate automatically between Polish and English"""
+    if not text:
+        return ""
     batch_to_translate = split_without_breaking_words(text, 300) #Model ma problem powyżej 300
     translations = model_translation.generate(**tokenizer(batch_to_translate, return_tensors="pt", padding=True))
     decoded_translation = tokenizer.batch_decode(translations, skip_special_tokens=True, clean_up_tokenization_spaces=True)
