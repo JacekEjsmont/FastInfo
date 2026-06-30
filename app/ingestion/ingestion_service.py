@@ -23,6 +23,8 @@ def ingest_articles():
         if not article_ai_data:
             continue
         summary_pl = article_ai_data.get("summary_pl")
+        if not summary_pl:
+            continue
         summary_eng = translate_text(summary_pl)
 
         article = Article(
