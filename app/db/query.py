@@ -1,5 +1,4 @@
-import sqlite3
-from sqlalchemy import desc, func, select
+from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session
 from app.db.models import Article, InfoCluster, info_clusters_articles
 from app.db.database import SessionLocal, delete
@@ -97,8 +96,14 @@ def get_articles_without_info_cluster(db: Session):
     )
 
 def execute_query(query: str):
-    conn = sqlite3.connect('news.db')
-    c = conn.cursor()
-    c.execute(query)
-    conn.commit()
-    conn.close()
+    with SessionLocal() as db:
+        db.execute(text(query))
+        db.commit()
+
+def execute_query_sqlite(query: str):
+    pass
+    # conn = sqlite3.connect('news.db')
+    # c = conn.cursor()
+    # c.execute(query)
+    # conn.commit()
+    # conn.close()
