@@ -4,17 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}News{% endblock %}</title>
-    <link rel="stylesheet" href="/static/app.css?v=17" />
+    <link rel="stylesheet" href="/static/app.css?v=20" />
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script src="/static/tts.js" defer></script>
   </head>
   <body>
     <header class="topbar">
       <div class="container topbar__inner">
-        <a class="brand" href="/ui">Fast Info</a>
-        <nav class="nav">
-          <a href="/docs">API Docs</a>
-        </nav>
+        <a class="brand" href="/ui">
+          <img class="brand__logo" src="/logo.png" alt="" aria-hidden="true" />
+          <span>Fast Info</span>
+        </a>
       </div>
     </header>
 
