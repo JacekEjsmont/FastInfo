@@ -10,8 +10,8 @@ import json
 def detect_clusters():
     data = get_all_embeddings()
 
-    embeddings = data["embeddings"].tolist()
-    ids = data["ids"]
+    embeddings = data.values()
+    ids = list(data.keys())
 
     clusters = cluster_by_similarity(embeddings, ids)
 
