@@ -57,7 +57,8 @@ def get_all_pinecone_embeddings():
     for ids in all_ids_each_1000:
         fetch_record = fast_info_index.fetch(ids=ids)
         vectors.update(fetch_record.vectors)
-    return {rec.id: rec.values for rec in vectors.values()}
+    all_vectors = {rec.id: rec.values for rec in vectors.values()}
+    return dict(sorted(all_vectors.items()))
 
 def get_all_embeddings_by_tags():
     return collection_by_tags.get(include=["embeddings", "metadatas"])
