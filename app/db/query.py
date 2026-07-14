@@ -2,7 +2,6 @@ from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session
 from app.db.models import Article, InfoCluster, info_clusters_articles
 from app.db.database import SessionLocal, delete
-from app.ai import vector_store
 
 def get_all_articles(db: Session):
     q = db.query(Article)
@@ -12,12 +11,7 @@ def get_all_articles(db: Session):
 def get_article_by_id(article_id: int, db: Session):
     return db.get(Article, article_id)
 
-def get_articles_not_embedded_yet():
-    with SessionLocal() as db:
-        q = db.query(Article)
-        ids_already_embedded = vector_store.get_all_embedding_ids()
-        articles = q.filter(~Article.id.in_(ids_already_embedded)).all()
-        return articles
+
 
 def delete_everything():
     stmt = delete(Article).where(Article.id.isnot(None))

@@ -1,15 +1,9 @@
 from fastapi import APIRouter, Depends
-from app.ingestion.ingestion_service import ingest_articles
 from app.db import query
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 
 router = APIRouter(prefix="/articles")
-
-@router.post("/ingest")
-def ingest():
-    ingest_articles()
-    return {"status": "ingested"}
 
 @router.get("/all_articles")
 def all_articles(db: Session = Depends(get_db)):
