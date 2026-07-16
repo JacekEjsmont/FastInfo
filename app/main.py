@@ -12,7 +12,6 @@ import time
 print("Launching app!!!!!!!!")
 load_dotenv()
 app = FastAPI()
-Base.metadata.create_all(bind=engine)
 
 app.include_router(articles.router)
 app.include_router(info_clusters.router)
