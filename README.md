@@ -14,3 +14,17 @@ In order launch working app there need to be .env file configured with keys for:
     
     #Api key to pinecone
     PINECONE_API_KEY=
+
+## Docker
+
+The app is ready to run in a container
+
+Build locally:
+
+```bash
+docker build -t fastinfo .
+docker run --rm -p 8080:8080 -e DATABASE_URL="postgresql+psycopg://..." fastinfo
+```
+
+Use container port `8080`.
+The app starts with `uvicorn app.main:app --host 0.0.0.0 --port ${PORT}`.
