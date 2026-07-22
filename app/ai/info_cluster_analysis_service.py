@@ -1,4 +1,5 @@
 import json
+from operator import itemgetter
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -9,8 +10,8 @@ client = OpenAI(api_key=open_ai_key)
 
 context = """Dostaniesz json string o strukturze: {claims:[]} Pole 'claims będzie zawierać liste z kluczowymi informacjami z artykułów gazet.
 Zwróć JSON z polami:
-summary_pl: Na podstawie informacji w polu 'claims' stwórz streszczenie informacyjne. Maks 2-4 zdania.
-title: tytuł dla stworzonego streszczenia.
+summary_pl: Na podstawie informacji w polu 'claims' stwórz opis czego dotyczą informacje. Maks 2-4 zdania.
+title: tytuł dla stworzonego opisu.
 
 Dodatkowe reguły:
 - Używaj tylko informacji zawartych w polu 'claims'
@@ -19,8 +20,9 @@ Dodatkowe reguły:
 
 def cluster_ai_analysis(articles_in_info_cluster):
     claims = []
-    for article in articles_in_info_cluster:
-        claims.append(json.loads(article.claims))
+    descending_articles_in_info_cluster = sorted(articles_in_info_cluster, key=itemgetter('published_at'), reverse = True)
+    for article in descending_articles_in_info_cluster:
+        claims.append(json.loads(article.get("claims")))
     claims_json = {"claims" : claims}
 
     prompt_messages = [
@@ -34,4 +36,3 @@ def cluster_ai_analysis(articles_in_info_cluster):
         input=prompt_messages
     )
     return response.output_text
-
