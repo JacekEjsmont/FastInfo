@@ -3,7 +3,6 @@ from app.db.models import Article
 from app.ingestion.rss import fetch_rss_articles
 from app.ingestion.parser import fetch_article_content
 from app.ai.summary_service import create_article_summary
-from app.ai.translation_service import translate_text
 import json
 
 def ingest_articles():
@@ -25,23 +24,18 @@ def ingest_articles():
         summary_pl = article_ai_data.get("summary_pl")
         if not summary_pl:
             continue
-        summary_eng = translate_text(summary_pl)
 
         article = Article(
             title=item["title"],
             summary_title=article_ai_data.get("title"),
             img=item["img_url"],
             content=content,
-            summary_eng=summary_eng,
             summary_pl=summary_pl,
             source=item["source"],
             url=item["url"],
-            actors=json.dumps(article_ai_data.get("actors")),
-            locations=json.dumps(article_ai_data.get("locations")),
             topic=article_ai_data.get("topic"),
             claims=json.dumps(article_ai_data.get("claims")),
-            uncertainties=json.dumps(article_ai_data.get("uncertainties")),
         )
         db.add(article)
-    db.commit()
+        db.commit()
     db.close()

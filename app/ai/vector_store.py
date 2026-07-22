@@ -7,10 +7,11 @@ from pinecone import Pinecone
 PINECONE_NAME = "Pinecone"
 CHROMA_NAME = "Chroma"
 USED_VECTOR_DB = PINECONE_NAME
+INDEX_NAME = "fast-info-openai-index"
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=PINECONE_API_KEY)
-fast_info_index = pc.Index("fast-info-index")
+fast_info_index = pc.Index(INDEX_NAME)
 
 client = chromadb.PersistentClient(path="/chromaDatabase")
 collection_by_summary = client.get_or_create_collection(name="articles_summary")
@@ -105,7 +106,8 @@ def store_embeddings_pinecone():
     articles = query.get_articles_not_embedded_yet()
     vectors = []
     for article in articles:
-        summary_text = f"{article.summary_eng}"
+        # summary_text = f"{article.summary_eng}"
+        summary_text = f"{article.summary_pl}"
         embedding_summary = embed_text(summary_text)
         if not embedding_summary:
             continue

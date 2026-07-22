@@ -1,13 +1,13 @@
 
 from scipy.spatial import distance
 
-def cluster_by_similarity(embeddings, ids, threshold=0.35):
+def cluster_by_similarity(embeddings, ids, threshold=0.31, clusters=[]):
     """ Groups embeddings of articles by their similarity scores
+    :param clusters: cluster to start with. Default is empty
     :param threshold: bigger value means less similar articles. Lower more similar
     :param embeddings: article embeddings
     :param ids: article ids
     :return: list of list of tuples containing grouped articles ids with their embeddings (article_id, embedding)"""
-    clusters = []
 
     for index, emb in enumerate(embeddings):
         article_id = ids[index]
@@ -15,11 +15,18 @@ def cluster_by_similarity(embeddings, ids, threshold=0.35):
 
         for cluster in clusters:
 
-            dist = distance.cosine(emb, cluster[0][1])
+            list_of_distances = []
+            for already_added in cluster:
+                d = distance.cosine(emb, already_added[1])
+                if article_id is not already_added[0]:
+                    list_of_distances.append(d)
 
-            if dist < threshold:
-                cluster.append((article_id, emb))
-                added = True
+            for dist in list_of_distances:
+                if dist < threshold:
+                    cluster.append((article_id, emb))
+                    added = True
+                    break
+            if added:
                 break
 
         if not added:
