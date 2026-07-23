@@ -36,8 +36,3 @@ def show_possible_clusters(db: Session = Depends(get_db)):
             article_id_to_article[article_id] = query.get_article_by_id(int(article_id), db)
         clusters_transformed.append(article_id_to_article)
     return clusters_transformed
-
-@router.get("/show_possible_clusters_by_tags")
-def show_possible_clusters_by_tags():
-    articles_embeddings = vector_store.get_all_embeddings_by_tags()
-    return cluster_by_similarity(articles_embeddings["embeddings"].tolist(), articles_embeddings["ids"], 0.15)

@@ -1,11 +1,9 @@
 import os
-import chromadb
-from app.ai.embeddings import embed_text, embed_tags
+from app.ai.embeddings import embed_text
 from app.db import query
 from pinecone import Pinecone
 
 PINECONE_NAME = "Pinecone"
-CHROMA_NAME = "Chroma"
 USED_VECTOR_DB = PINECONE_NAME
 INDEX_NAME = "fast-info-openai-index"
 
@@ -13,43 +11,11 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 fast_info_index = pc.Index(INDEX_NAME)
 
-client = chromadb.PersistentClient(path="/chromaDatabase")
-collection_by_summary = client.get_or_create_collection(name="articles_summary")
-collection_by_tags = client.get_or_create_collection(name="articles_tags")
-old_collection = client.get_or_create_collection(name="articles")
-
-def delete_all_collections():
-    client.delete_collection(name="articles")
-    client.delete_collection(name="articles_summary")
-    client.delete_collection(name="articles_tags")
-
-def add_embedding_by_summary(article_id: int, embedding, metadata: dict):
-    collection_by_summary.add(
-        ids=[str(article_id)],
-        embeddings=[embedding],
-        metadatas=[metadata]
-    )
-
-def delete_embedding_by_ids(article_ids: list):
-    """:param article_ids where ids must be strings"""
-    collection_by_summary.delete(ids=article_ids)
-
-def add_embedding_by_tags(article_id: int, embedding, metadata: dict):
-    collection_by_tags.add(
-        ids=[str(article_id)],
-        embeddings=[embedding],
-        metadatas=[metadata]
-    )
-
 def get_all_embeddings():
     if USED_VECTOR_DB == PINECONE_NAME:
         return get_all_pinecone_embeddings()
-    elif USED_VECTOR_DB == CHROMA_NAME:
-        return get_all_chroma_embeddings()
     return None
 
-def get_all_chroma_embeddings():
-    return collection_by_summary.get(include=["embeddings", "metadatas"])
 
 def get_all_pinecone_embeddings():
     all_ids = get_all_embedding_ids()
@@ -61,18 +27,10 @@ def get_all_pinecone_embeddings():
     all_vectors = {rec.id: rec.values for rec in vectors.values()}
     return dict(sorted(all_vectors.items()))
 
-def get_all_embeddings_by_tags():
-    return collection_by_tags.get(include=["embeddings", "metadatas"])
-
 def get_all_embedding_ids():
     if USED_VECTOR_DB == PINECONE_NAME:
         return get_all_embedding_ids_pinecone()
-    elif USED_VECTOR_DB == CHROMA_NAME:
-        return get_all_embeddings_chroma()
     return None
-
-def get_all_embeddings_chroma():
-    return collection_by_summary.get().get("ids")
 
 def get_all_embedding_ids_pinecone():
     all_ids = []
@@ -84,29 +42,11 @@ def get_all_embedding_ids_pinecone():
 def store_embeddings():
     if USED_VECTOR_DB == PINECONE_NAME:
         store_embeddings_pinecone()
-    elif USED_VECTOR_DB == CHROMA_NAME:
-        store_embeddings_chroma()
-
-def store_embeddings_chroma():
-    articles = query.get_articles_not_embedded_yet()
-    for article in articles:
-        summary_text = f"{article.summary_eng}"
-        embedding_summary = embed_text(summary_text)
-        add_embedding_by_summary(
-            article.id,
-            embedding_summary,
-            {
-                "title": article.title,
-                "source": article.source,
-                "topic": article.topic
-            }
-        )
 
 def store_embeddings_pinecone():
     articles = query.get_articles_not_embedded_yet()
     vectors = []
     for article in articles:
-        # summary_text = f"{article.summary_eng}"
         summary_text = f"{article.summary_pl}"
         embedding_summary = embed_text(summary_text)
         if not embedding_summary:

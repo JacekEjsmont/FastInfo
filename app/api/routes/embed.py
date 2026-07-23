@@ -8,11 +8,6 @@ def all_embeddings():
     articles_embeddings = vector_store.get_all_embeddings()
     return articles_embeddings
 
-@router.get("/all_embeddings_by_tags")
-def all_embeddings():
-    articles_embeddings = vector_store.get_all_embeddings_by_tags()
-    return articles_embeddings.get("ids")
-
 @router.post("/embed")
 def embed():
     vector_store.store_embeddings()
