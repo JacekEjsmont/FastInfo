@@ -10,72 +10,71 @@
         {% set article = a.obj %}
         {% set claims_display = a.claims_display or [] %}
         <div class="article-row">
-          <article
-            class="article"
-            data-tts-item
-            data-tts-title="{{ (article.summary_title or article.title or ('Artykuł #' ~ article.id)) | e }}"
-            data-tts-text="{{ (article.summary_pl or article.summary_eng or '') | e }}"
-          >
-            <div class="article__layout">
-              <div class="article__main">
-                <div class="article__head">
-                  {% if article.img %}
-                    <img class="thumb thumb--article" src="{{ article.img }}" alt="" loading="lazy" />
-                  {% else %}
-                    <div class="thumb thumb--placeholder thumb--article" aria-hidden="true"></div>
-                  {% endif %}
-                  <div class="article__headtext">
-                    <div class="article__title">{{ article.summary_title or article.title or ("Artykuł #" ~ article.id) }}</div>
-                    {% if article.published_at or article.source %}
-                      <div class="article__meta">
-                        {% if article.source %}<span>{{ article.source }}</span>{% endif %}
-                        {% if article.published_at %}<span>· {{ article.published_at }}</span>{% endif %}
-                      </div>
-                    {% endif %}
+          <details class="cluster cluster--article">
+            <summary class="cluster__summary">
+              <div class="cluster__head">
+                {% if article.img %}
+                  <img class="thumb" src="{{ article.img }}" alt="" loading="lazy" />
+                {% else %}
+                  <div class="thumb thumb--placeholder" aria-hidden="true"></div>
+                {% endif %}
+                <div class="cluster__headtext">
+                  <div class="cluster__title">{{ article.summary_title or article.title or ("Artykuł #" ~ article.id) }}</div>
+                  <div class="cluster__meta">
+                    <span class="pill pill--article">Streszczenie</span>
+                    {% if article.published_at %}<span>· {{ article.published_at }}</span>{% endif %}
+                    {% if article.source %}<span>· {{ article.source }}</span>{% endif %}
                   </div>
                 </div>
-                {% if article.summary_pl %}
-                  <div class="article__summary">{{ article.summary_pl }}</div>
-                {% else %}
-                  <div class="muted">Brak `summary_pl`.</div>
-                {% endif %}
-                <div class="article__actions">
-                  {% if article.url %}
-                    <a href="{{ article.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
+              </div>
+              <div class="cluster__summarysplit">
+                <div class="cluster__summarymain">
+                  {% if article.summary_pl %}
+                    <div class="cluster__summarytext">{{ article.summary_pl }}</div>
                   {% endif %}
-                  <button
-                    class="icon-button"
-                    type="button"
-                    data-tts-button
-                    data-tts-state="idle"
-                    aria-label="Odczytaj artykuł"
-                    title="Odczytaj artykuł"
-                  >
-                    <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M8 5v14l11-7z"></path>
-                    </svg>
-                    <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
-                      <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
-                    </svg>
-                  </button>
-                  <button
-                    class="icon-button"
-                    type="button"
-                    data-tts-stop
-                    aria-label="Zatrzymaj czytanie"
-                    title="Zatrzymaj czytanie"
-                  >
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6 6h12v12H6z"></path>
-                    </svg>
-                  </button>
                 </div>
               </div>
+            </summary>
+            <div
+              class="cluster__body article--detail"
+              data-tts-item
+              data-tts-title="{{ (article.summary_title or article.title or ('Artykuł #' ~ article.id)) | e }}"
+              data-tts-text="{{ (article.summary_pl or article.summary_eng or '') | e }}"
+            >
+              {% if article.url %}
+                <a href="{{ article.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
+              {% endif %}
+              <button
+                class="icon-button"
+                type="button"
+                data-tts-button
+                data-tts-state="idle"
+                aria-label="Odczytaj artykuł"
+                title="Odczytaj artykuł"
+              >
+                <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+                <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                  <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
+                </svg>
+              </button>
+              <button
+                class="icon-button"
+                type="button"
+                data-tts-stop
+                aria-label="Zatrzymaj czytanie"
+                title="Zatrzymaj czytanie"
+              >
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6h12v12H6z"></path>
+                </svg>
+              </button>
             </div>
-          </article>
+          </details>
           {% if claims_display %}
             <aside class="article__claims" aria-label="Claims">
-              <div class="article__claims-title">claims</div>
+              <div class="article__claims-title">fakty</div>
               <ul class="article__claims-list">
                 {% for claim in claims_display %}
                   <li>{{ claim }}</li>

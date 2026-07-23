@@ -24,7 +24,7 @@
                   <div class="cluster__headtext">
                     <div class="cluster__title">{{ c.title or ("Cluster #" ~ c.id) }}</div>
                     <div class="cluster__meta">
-                      <span class="pill pill--cluster">InfoCluster</span>
+                      <span class="pill pill--cluster">Wiekszy Temat</span>
                       <span class="pill pill--count">{{ item.articles_count }} artykułów</span>
                       {% if c.updated_at %}<span>· {{ c.updated_at }}</span>{% endif %}
                     </div>
@@ -60,7 +60,7 @@
                     <div class="cluster__headtext">
                       <div class="cluster__title">{{ a.summary_title or a.title or ("Artykuł #" ~ a.id) }}</div>
                       <div class="cluster__meta">
-                        <span class="pill pill--article">Unclustered Article</span>
+                        <span class="pill pill--article">Streszczenie</span>
                         {% if a.published_at %}<span>· {{ a.published_at }}</span>{% endif %}
                         {% if a.source %}<span>· {{ a.source }}</span>{% endif %}
                       </div>
