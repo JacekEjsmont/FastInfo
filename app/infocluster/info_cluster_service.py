@@ -63,6 +63,8 @@ def refresh_info_clusters():
     for cluster in clusters:
         if len(cluster) <= 1:
             continue
+        if cluster[0][0] == cluster[1][0]:
+            continue
         info_cluster_id = cluster[0][0] + cluster[1][0]
         info_cluster = db.query(InfoCluster).get(info_cluster_id)
         if nothing_changed_in_info_cluster(info_cluster, cluster):
