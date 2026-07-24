@@ -6,11 +6,11 @@ load_dotenv()
 open_ai_key = os.getenv("OPEN_AI_KEY")
 client = OpenAI(api_key=open_ai_key)
 
-MAP_OF_TOPIC = {"Nauka i Technologie" : "Wszystko co związane Nauką, Technologią, Wynalazkami, AI w Polsce i na świecie",
+MAP_OF_TOPIC = {"Nauka i Technologie" : "Wszystko co związane Nauką, Technologią, Wynalazkami, AI, IT, Robotyką itd na świecie i w Polsce",
                 "Społeczeństwo" : "Tematy dotyczące społeczeństwa i życia w polsce i na świecie",
                 "Polityka i Prawo Polski" : "Tematy dotyczące Polityki wewnątrz Polski i Prawa w Polsce",
                 "Gospodarka i Biznes" : "Tematy dotyczące Gospodarki biznesu i finansów",
-                "Geopolityka i Konflikty zbrojne" : "Wydarzenia Geopolityczne i Konflikty zbrojne",
+                "Geopolityka i Konflikty zbrojne" : "Informacje dotyczące Geopolityki, Polityki Globalnej i Konfliktów zbrojnych",
                 "Ze Świata" : "Wydarzenia polityczne i nie polityczne tylko po za Polską nie pasujące do kategorii Geopolityka i Konflikty zbrojne jak i Gospodarka i Biznes, Nauka",
                 "Wydarzenia z Polski" : "Wydarzenia z Polski nietożsame z polityką, gospodarką, biznezem, prawem, finansami, nauką",
                 "Sport" : "Wydarzenia sportowe z Polski i ze Świata",
