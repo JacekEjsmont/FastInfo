@@ -20,8 +20,7 @@ Dodatkowe reguły:
 
 def cluster_ai_analysis(articles_in_info_cluster):
     claims = []
-    descending_articles_in_info_cluster = sorted(articles_in_info_cluster, key=itemgetter('published_at'), reverse = True)
-    for article in descending_articles_in_info_cluster:
+    for article in articles_in_info_cluster:
         claims.append(json.loads(article.get("claims")))
     claims_json = {"claims" : claims}
 

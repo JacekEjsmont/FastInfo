@@ -29,7 +29,6 @@ def ingest_articles():
             title=item["title"],
             summary_title=article_ai_data.get("title"),
             img=item["img_url"],
-            content=content,
             summary_pl=summary_pl,
             source=item["source"],
             url=item["url"],

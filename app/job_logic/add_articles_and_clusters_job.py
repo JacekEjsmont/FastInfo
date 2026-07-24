@@ -12,7 +12,7 @@ def run_add_articles_and_clusters_job() -> dict[str, object]:
 
     results: dict[str, object] = {}
     for step_name, path in steps:
-        response = requests.post(f"{base_url}{path}", timeout=900)
+        response = requests.post(f"{base_url}{path}", timeout=900, headers={"Content-Type": "application/json", "User-Agent": "Google-Cloud-Scheduler"})
         response.raise_for_status()
         results[step_name] = response.json()
 

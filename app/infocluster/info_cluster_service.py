@@ -20,7 +20,6 @@ def detect_clusters():
 
     info_clusters_first_run = cluster_by_similarity(embeddings, ids)
     info_clusters = cluster_by_similarity(embeddings, ids, clusters=info_clusters_first_run)
-
     return info_clusters
 
 def nothing_changed_in_info_cluster(info_cluster, cluster):
@@ -72,8 +71,8 @@ def refresh_info_clusters():
         if not info_cluster:
             info_cluster = create_new_info_cluster(info_cluster_id)
         cluster_updated = update_info_cluster(info_cluster, cluster, db)
+        print(info_cluster.title)
         if cluster_updated:
             db.merge(info_cluster)
             db.commit()
-
     db.close()

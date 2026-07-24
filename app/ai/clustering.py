@@ -14,7 +14,10 @@ def cluster_by_similarity(embeddings, ids, threshold=0.31, clusters=[]):
         added = False
 
         for cluster in clusters:
-
+            already_added_ids = [element[0] for element in cluster]
+            if article_id in already_added_ids:
+                added = True
+                break
             list_of_distances = []
             for already_added in cluster:
                 d = distance.cosine(emb, already_added[1])
