@@ -53,7 +53,7 @@ def get_info_clusters_recent_with_counts(db: Session):
     return (
         db.query(
             InfoCluster,
-            func.count(info_clusters_articles.c.article_id).label("articles_count"),
+            func.count(func.distinct(info_clusters_articles.c.article_id)).label("articles_count"),
             thumb_subq.label("thumb_url"),
         )
         .outerjoin(
@@ -71,6 +71,18 @@ def get_info_cluster_by_id(info_cluster_id: int, db: Session):
 
 def get_info_cluster_model_by_id(info_cluster_id: int, db: Session):
     return db.get(InfoCluster, info_cluster_id)
+
+def get_topics_for_info_cluster(info_cluster_id: int, db: Session):
+    rows = (
+        db.query(Article.topic)
+        .join(Article.infoclusters)
+        .filter(InfoCluster.id == info_cluster_id)
+        .filter(Article.topic.isnot(None))
+        .filter(Article.topic != "")
+        .distinct()
+        .all()
+    )
+    return [row[0] for row in rows if row and row[0]]
 
 def get_articles_for_info_cluster(info_cluster_id: int, db: Session):
     return (

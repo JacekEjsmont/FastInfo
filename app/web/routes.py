@@ -15,6 +15,18 @@ router = APIRouter(prefix="/ui", tags=["ui"])
 templates_dir = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(templates_dir))
 
+ARTICLE_TOPICS = ["Nauka i Technologie",
+                  "Społeczeństwo",
+                  "Geopolityka i Konflikty zbrojne",
+                  "Ze Świata",
+                  "Polityka i Prawo Polski",
+                  "Gospodarka i Biznes",
+                  "Wydarzenia z Polski",
+                  "Sport",
+                  "Środowisko i Klimat",
+                  "Kultura i Rozrywka",
+                  "Kataklizmy"]
+
 
 def parse_claims(value: str | None) -> list[str]:
     if not value:
@@ -57,6 +69,7 @@ def ui_info_clusters(request: Request, db: Session = Depends(get_db)) -> HTMLRes
                 "obj": c,
                 "articles_count": int(articles_count or 0),
                 "thumb_url": thumb_url,
+                "topics": query.get_topics_for_info_cluster(c.id, db),
             }
         )
     for a in unclustered_articles:
@@ -70,7 +83,11 @@ def ui_info_clusters(request: Request, db: Session = Depends(get_db)) -> HTMLRes
         )
     items.sort(key=lambda x: x["date"] or 0, reverse=True)
 
-    return render_template(request, "pages/info_clusters.html", {"request": request, "items": items})
+    return render_template(
+        request,
+        "pages/info_clusters.html",
+        {"request": request, "items": items, "topic_filters": ARTICLE_TOPICS},
+    )
 
 
 @router.get("/infos/{cluster_id}/articles", response_class=HTMLResponse)

@@ -3,6 +3,15 @@
 
 {% block content %}
   <section class="stack">
+    <div class="topic-filters" role="toolbar" aria-label="Filtruj artykuły po temacie">
+      <button class="topic-filter is-active" type="button" data-topic-filter="all" aria-pressed="true">Wszystkie</button>
+      {% for topic in topic_filters or [] %}
+        <button class="topic-filter" type="button" data-topic-filter="{{ topic | e }}" aria-pressed="false">
+          {{ topic }}
+        </button>
+      {% endfor %}
+    </div>
+
     <div class="row row--space">
       <h1></h1>
       <div class="muted">Sortowanie: najnowsze</div>
@@ -13,7 +22,7 @@
         {% for item in items %}
           {% if item.kind == "cluster" %}
             {% set c = item.obj %}
-            <details class="cluster">
+            <details class="cluster" data-info-cluster-row data-cluster-topics="{{ (item.topics or []) | join('|') }}">
               <summary class="cluster__summary">
                 <div class="cluster__head">
                   {% if item.thumb_url %}
@@ -24,7 +33,7 @@
                   <div class="cluster__headtext">
                     <div class="cluster__title">{{ c.title or ("Cluster #" ~ c.id) }}</div>
                     <div class="cluster__meta">
-                      <span class="pill pill--cluster">Wiekszy Temat</span>
+                      <span class="pill pill--cluster">Więcej podobnych artykułów</span>
                       <span class="pill pill--count">{{ item.articles_count }} artykułów</span>
                       {% if c.updated_at %}<span>· {{ c.updated_at }}</span>{% endif %}
                     </div>
@@ -48,80 +57,8 @@
           {% else %}
             {% set a = item.obj %}
             {% set claims_display = item.claims_display or [] %}
-            <div class="article-row">
-              <details class="cluster cluster--article">
-                <summary class="cluster__summary">
-                  <div class="cluster__head">
-                    {% if a.img %}
-                      <img class="thumb" src="{{ a.img }}" alt="" loading="lazy" />
-                    {% else %}
-                      <div class="thumb thumb--placeholder" aria-hidden="true"></div>
-                    {% endif %}
-                    <div class="cluster__headtext">
-                      <div class="cluster__title">{{ a.summary_title or a.title or ("Artykuł #" ~ a.id) }}</div>
-                      <div class="cluster__meta">
-                        <span class="pill pill--article">Streszczenie</span>
-                        {% if a.published_at %}<span>· {{ a.published_at }}</span>{% endif %}
-                        {% if a.source %}<span>· {{ a.source }}</span>{% endif %}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="cluster__summarysplit">
-                    <div class="cluster__summarymain">
-                      {% if a.summary_pl %}
-                        <div class="cluster__summarytext">{{ a.summary_pl }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                </summary>
-                <div
-                  class="cluster__body article--detail"
-                  data-tts-item
-                  data-tts-title="{{ (a.summary_title or a.title or ('Artykuł #' ~ a.id)) | e }}"
-                  data-tts-text="{{ (a.summary_pl or a.summary_eng or '') | e }}"
-                >
-                  {% if a.url %}
-                    <a href="{{ a.url }}" target="_blank" rel="noreferrer">Otwórz źródło</a>
-                  {% endif %}
-                  <button
-                    class="icon-button"
-                    type="button"
-                    data-tts-button
-                    data-tts-state="idle"
-                    aria-label="Odczytaj artykuł"
-                    title="Odczytaj artykuł"
-                  >
-                    <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M8 5v14l11-7z"></path>
-                    </svg>
-                    <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
-                      <path d="M6 5h4v14H6zm8 0h4v14h-4z"></path>
-                    </svg>
-                  </button>
-                  <button
-                    class="icon-button"
-                    type="button"
-                    data-tts-stop
-                    aria-label="Zatrzymaj czytanie"
-                    title="Zatrzymaj czytanie"
-                  >
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6 6h12v12H6z"></path>
-                    </svg>
-                  </button>
-                </div>
-              </details>
-              {% if claims_display %}
-                <aside class="article__claims" aria-label="Claims">
-                  <div class="article__claims-title">fakty</div>
-                  <ul class="article__claims-list">
-                    {% for claim in claims_display %}
-                      <li>{{ claim }}</li>
-                    {% endfor %}
-                  </ul>
-                </aside>
-              {% endif %}
-            </div>
+            {% set article = a %}
+            {% include "partials/article_item.html" %}
           {% endif %}
         {% endfor %}
       </div>
