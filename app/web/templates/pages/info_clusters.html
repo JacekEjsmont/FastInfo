@@ -1,12 +1,19 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Fast Info · News{% endblock %}
 
 {% block content %}
   <section class="stack">
+    {% set default_topics = [
+      "Geopolityka i Konflikty zbrojne",
+      "Ze Świata",
+      "Nauka i Technologie",
+      "Polityka i Prawo Polski",
+      "Wydarzenia z Polski",
+    ] %}
     <div class="topic-filters" role="toolbar" aria-label="Filtruj artykuły po temacie">
-      <button class="topic-filter is-active" type="button" data-topic-filter="all" aria-pressed="true">Wszystkie</button>
+      <button class="topic-filter" type="button" data-topic-filter="all" aria-pressed="false">Wszystkie</button>
       {% for topic in topic_filters or [] %}
-        <button class="topic-filter" type="button" data-topic-filter="{{ topic | e }}" aria-pressed="false">
+        <button class="topic-filter{% if topic in default_topics %} is-active{% endif %}" type="button" data-topic-filter="{{ topic | e }}" aria-pressed="{% if topic in default_topics %}true{% else %}false{% endif %}">
           {{ topic }}
         </button>
       {% endfor %}
