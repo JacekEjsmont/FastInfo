@@ -3,6 +3,7 @@ from app.db.models import Article
 from app.ingestion.rss import fetch_rss_articles
 from app.ingestion.parser import fetch_article_content
 from app.ai.summary_service import create_article_summary
+from sqlalchemy import or_
 import json
 
 def ingest_articles():
@@ -12,7 +13,7 @@ def ingest_articles():
 
     print("ai summarizing processing...")
     for item in rss_articles:
-        exists = db.query(Article).filter(Article.url == item["url"]).first()
+        exists = db.query(Article).filter(or_(Article.url == item["url"], Article.img == item["img_url"], Article.title == item["title"])).first()
         if exists:
             continue
         content = fetch_article_content(item["url"])
