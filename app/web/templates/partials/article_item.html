@@ -1,11 +1,11 @@
 <div class="article-row" data-article-row data-article-topic="{{ article.topic or '' }}">
-  <details class="cluster cluster--article">
+  <details class="cluster cluster--article{% if article_compact %} cluster--article--compact{% endif %}">
     <summary class="cluster__summary">
       <div class="cluster__head">
         {% if article.img %}
-          <img class="thumb" src="{{ article.img }}" alt="" loading="lazy" />
+          <img class="thumb{% if article_compact %} thumb--article--compact{% endif %}" src="{{ article.img }}" alt="" loading="lazy" />
         {% else %}
-          <div class="thumb thumb--placeholder" aria-hidden="true"></div>
+          <div class="thumb thumb--placeholder{% if article_compact %} thumb--article--compact{% endif %}" aria-hidden="true"></div>
         {% endif %}
         <div class="cluster__headtext">
           <div class="cluster__title">{{ article.summary_title or article.title or ("Artykuł #" ~ article.id) }}</div>

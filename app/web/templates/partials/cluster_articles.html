@@ -3,6 +3,7 @@
     {% for a in articles %}
       {% set article = a.obj %}
       {% set claims_display = a.claims_display or [] %}
+      {% set article_compact = true %}
       {% include "partials/article_item.html" %}
     {% endfor %}
     <div class="articles-empty" hidden>Brak artykułów dla wybranego tematu.</div>
