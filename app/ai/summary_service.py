@@ -24,7 +24,7 @@ context = f"""Jesteś profesjonalnym redaktorem wiadomości, Wyciągnij z artyku
 Zwróć JSON z polami:
 summary_pl: zwięzłe streszczenie artykułu, zachowaj kluczowe fakty i kontekst i skup się na najważniejszych informacjach, maksymalnie 4–5 zdań.
 title: tytuł dla stworzonego streszczenia.
-topic: kategoria artykułu. Dopasuj kategorie na podstawie tej mapy: {str(MAP_OF_TOPIC)}. Gdzie klucz mapy to kategoria a wartość mapy to wytyczne do przydzielania kategori.
+topic: kategoria artykułu. Dopasuj kategorie na podstawie tej mapy: {str(MAP_OF_TOPIC)}. Gdzie klucz mapy to kategoria a wartość mapy to wytyczne do przydzielania kategorii.
 claims: zgłoszone faktyczne stwierdzenia.
 
 Dodatkowe reguły:
@@ -41,7 +41,7 @@ def create_article_summary(text):
         {"role": "user", "content": f"""Artykuł: {text}"""},
     ]
     response = client.responses.create(
-        model="gpt-5.4-nano",
+        model="gpt-5.6-luna",
         timeout=180,
         input=prompt_messages
     )

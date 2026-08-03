@@ -1,5 +1,8 @@
 import os
 import requests
+from app.db import query
+from app.ai import vector_store
+import app.db.query
 
 def run_add_articles_and_clusters_job() -> dict[str, object]:
     base_url = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
@@ -19,3 +22,13 @@ def run_add_articles_and_clusters_job() -> dict[str, object]:
     return results
 
 
+def run_delete_6_days_old_call_job(db):
+    articles_ids_to_delete = query.get_articles_ids_older_than_6_days(db)
+    vector_store.delete_embeddings_by_ids([str(art_id) for art_id in articles_ids_to_delete])
+    query.delete_info_clusters_articles_with_ids(articles_ids_to_delete, db)
+    db.commit()
+    query.delete_articles_with_ids(articles_ids_to_delete, db)
+    query.delete_info_clusters_without_articles(db)
+    db.commit()
+    db.close()
+    return len(articles_ids_to_delete)

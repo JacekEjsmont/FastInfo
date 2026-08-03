@@ -12,14 +12,15 @@ def break_if_topic_is_weather(topic):
         return True
     return False
 
-def detect_clusters():
-    data = get_all_embeddings()
+def detect_clusters(db):
+    embeddings_data = get_all_embeddings()
 
-    embeddings = data.values()
-    ids = list(data.keys())
-
-    info_clusters_first_run = cluster_by_similarity(embeddings, ids)
-    info_clusters = cluster_by_similarity(embeddings, ids, clusters=info_clusters_first_run)
+    articles_ids_per_cluster = query.get_articles_ids_per_cluster(db)
+    current_clusters = [[(str(article_id), embeddings_data.get(str(article_id))) for article_id in articles_cluster] for articles_cluster in articles_ids_per_cluster]
+    if not current_clusters:
+        current_clusters = []
+    info_clusters_first_run = cluster_by_similarity(embeddings_data, clusters=current_clusters)
+    info_clusters = cluster_by_similarity(embeddings_data, clusters=info_clusters_first_run)
     return info_clusters
 
 def nothing_changed_in_info_cluster(info_cluster, cluster):
@@ -57,7 +58,7 @@ def update_info_cluster(info_cluster, cluster, db):
 def refresh_info_clusters():
     """first function in flow of creating info clusters"""
     db = SessionLocal()
-    clusters = detect_clusters()
+    clusters = detect_clusters(db)
     print("ai articles clustering processing...")
     for cluster in clusters:
         if len(cluster) <= 1:

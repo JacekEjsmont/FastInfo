@@ -57,3 +57,11 @@ def store_embeddings_pinecone():
                   }
         vectors.append(vector)
     fast_info_index.upsert(vectors=vectors)
+
+
+def delete_embeddings_pinecone(articles_ids):
+    fast_info_index.delete(ids=articles_ids, namespace="__default__")
+
+def delete_embeddings_by_ids(articles_ids):
+    if USED_VECTOR_DB == PINECONE_NAME:
+        delete_embeddings_pinecone(articles_ids)

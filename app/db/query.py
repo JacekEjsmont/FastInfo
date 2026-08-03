@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session
 from app.db.models import Article, InfoCluster, info_clusters_articles
@@ -19,12 +21,30 @@ def get_articles_not_embedded_yet():
         articles = q.filter(~Article.id.in_(ids_already_embedded)).all()
         return articles
 
-def delete_everything():
+def delete_all_articles():
     stmt = delete(Article).where(Article.id.isnot(None))
     db = SessionLocal()
     db.execute(stmt)
     db.commit()
     db.close()
+
+def delete_articles_with_ids(article_ids, db: Session):
+    query = db.query(Article).filter(Article.id.in_(article_ids))
+    query.delete(synchronize_session=False)
+    db.commit()
+
+def delete_info_clusters_articles_with_ids(article_ids, db: Session):
+    if not article_ids:
+        return
+
+    stmt = delete(info_clusters_articles).where(info_clusters_articles.c.article_id.in_(article_ids))
+    db.execute(stmt)
+    db.commit()
+
+def delete_info_clusters_without_articles(db: Session):
+    stmt = delete(InfoCluster).where(~InfoCluster.articles.any())
+    db.execute(stmt)
+    db.commit()
 
 def delete_where_claims_empty():
     stmt = delete(Article).where(Article.claims.is_(None))
@@ -34,7 +54,15 @@ def delete_where_claims_empty():
     db.close()
 
 def get_all_info_clusters(db: Session):
-    return db.query(InfoCluster).filter(InfoCluster.id.isnot(None)).all()
+    all_info_clusters = db.query(InfoCluster).filter(InfoCluster.id.isnot(None)).all()
+    return all_info_clusters
+
+def get_articles_ids_per_cluster(db: Session):
+    all_info_clusters = db.query(InfoCluster).filter(InfoCluster.id.isnot(None)).all()
+    articles_in_info_clusters = [[article.id for article in cluster.articles] for cluster in all_info_clusters]
+    for article_ids_list in articles_in_info_clusters:
+        article_ids_list.sort()
+    return articles_in_info_clusters
 
 def get_info_clusters_recent(db: Session):
     return (
@@ -94,6 +122,14 @@ def get_articles_without_info_cluster(db: Session):
         .order_by(desc(Article.published_at))
         .all()
     )
+
+def get_articles_ids_older_than_6_days(db: Session):
+    cutoff_date = datetime.datetime.utcnow() - datetime.timedelta(days=6)
+    return db.scalars(
+        select(Article.id)
+        .where(Article.published_at < cutoff_date)
+        .order_by(desc(Article.published_at))
+    ).all()
 
 def execute_query(query: str):
     with SessionLocal() as db:

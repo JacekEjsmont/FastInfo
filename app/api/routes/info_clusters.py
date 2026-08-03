@@ -24,9 +24,12 @@ def info_cluster(info_cluster_id: str, db: Session = Depends(get_db)):
 @router.get("/show_possible_clusters")
 def show_possible_clusters(db: Session = Depends(get_db)):
     articles_embeddings = vector_store.get_all_embeddings()
-    info_clusters_first_run = cluster_by_similarity(list(articles_embeddings.values()), list(articles_embeddings.keys()))
-    info_clusters = cluster_by_similarity(list(articles_embeddings.values()), list(articles_embeddings.keys()), clusters=info_clusters_first_run)
 
+    articles_ids_per_cluster = query.get_articles_ids_per_cluster(db)
+    current_clusters = [[(str(article_id), articles_embeddings.get(str(article_id))) for article_id in articles_cluster] for
+                        articles_cluster in articles_ids_per_cluster]
+    info_clusters_first_run = cluster_by_similarity(articles_embeddings, clusters=current_clusters)
+    info_clusters = cluster_by_similarity(articles_embeddings, clusters=info_clusters_first_run)
     only_clusters = [cluster for cluster in info_clusters if len(cluster) >= 2]
     clusters_transformed = []
     for cluster in only_clusters:
