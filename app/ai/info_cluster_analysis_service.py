@@ -29,9 +29,8 @@ def cluster_ai_analysis(articles_in_info_cluster):
         {"role": "user", "content": f"""Json z danymi: {json.dumps(claims_json)}"""},
     ]
     response = client.responses.create(
-        model="gpt-5.4-nano",
+        model="gpt-5.6-luna",
         timeout=180,
-        temperature=0.2,
         input=prompt_messages
     )
     return response.output_text

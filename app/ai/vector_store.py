@@ -56,7 +56,8 @@ def store_embeddings_pinecone():
                   "metadata": {"title": article.title, "source": article.source, "topic": article.topic}
                   }
         vectors.append(vector)
-    fast_info_index.upsert(vectors=vectors)
+    if vectors:
+        fast_info_index.upsert(vectors=vectors)
 
 
 def delete_embeddings_pinecone(articles_ids):
