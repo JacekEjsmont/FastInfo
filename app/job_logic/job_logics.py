@@ -29,7 +29,15 @@ def run_delete_6_days_old_call_job(db):
     vector_store.delete_embeddings_by_ids([str(art_id) for art_id in articles_ids_to_delete])
     query.delete_info_clusters_articles_with_ids(articles_ids_to_delete, db)
     db.commit()
+
     query.delete_articles_with_ids(articles_ids_to_delete, db)
+    db.commit()
+
+    info_clusters_size_1 = query.get_info_clusters_size_1(db)
+    info_clusters_size_1_ids = [cluster.id for cluster in info_clusters_size_1]
+    query.delete_info_clusters_articles_with_clusters_ids(info_clusters_size_1_ids, db)
+    db.commit()
+
     query.delete_info_clusters_without_articles(db)
     db.commit()
     db.close()

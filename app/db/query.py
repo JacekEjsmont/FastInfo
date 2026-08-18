@@ -41,6 +41,14 @@ def delete_info_clusters_articles_with_ids(article_ids, db: Session):
     db.execute(stmt)
     db.commit()
 
+def delete_info_clusters_articles_with_clusters_ids(clusters_ids, db: Session):
+    if not clusters_ids:
+        return
+
+    stmt = delete(info_clusters_articles).where(info_clusters_articles.c.infocluster_id.in_(clusters_ids))
+    db.execute(stmt)
+    db.commit()
+
 def delete_info_clusters_without_articles(db: Session):
     stmt = delete(InfoCluster).where(~InfoCluster.articles.any())
     db.execute(stmt)
@@ -71,6 +79,9 @@ def get_info_clusters_recent(db: Session):
         .order_by(desc(InfoCluster.updated_at))
         .all()
     )
+
+def get_info_clusters_size_1(db: Session):
+    return db.query(InfoCluster).where(InfoCluster.articles.size == 1).all()
 
 def get_info_clusters_recent_with_counts(db: Session):
     thumb_subq = (
