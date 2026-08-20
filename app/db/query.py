@@ -72,6 +72,14 @@ def get_articles_ids_per_cluster(db: Session):
         article_ids_list.sort()
     return articles_in_info_clusters
 
+def get_str_articles_ids_already_in_cluster(db: Session):
+    all_info_clusters = db.query(InfoCluster).filter(InfoCluster.id.isnot(None)).all()
+    articles_ids = []
+    for cluster in all_info_clusters:
+        for article in cluster.articles:
+            articles_ids.append(str(article.id))
+    return articles_ids
+
 def get_info_clusters_recent(db: Session):
     return (
         db.query(InfoCluster)
@@ -134,8 +142,8 @@ def get_articles_without_info_cluster(db: Session):
         .all()
     )
 
-def get_articles_ids_older_than_6_days(db: Session):
-    cutoff_date = datetime.datetime.utcnow() - datetime.timedelta(days=6)
+def get_articles_ids_older_than(db: Session, days: int):
+    cutoff_date = datetime.datetime.utcnow() - datetime.timedelta(days=days)
     return db.scalars(
         select(Article.id)
         .where(Article.published_at < cutoff_date)

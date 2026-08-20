@@ -12,10 +12,30 @@ def break_if_topic_is_weather(topic):
         return True
     return False
 
+def delete_duplicates(articles_ids_per_cluster):
+    def find_duplicates(items):
+        seen = set()
+        duplicates = []
+
+        for item in items:
+            key = tuple(item)
+
+            if key in seen:
+                if list(item) not in duplicates:
+                    duplicates.append(list(item))
+            else:
+                seen.add(key)
+
+        return duplicates
+    duplicates = find_duplicates(articles_ids_per_cluster)
+    for duplicate in duplicates:
+        articles_ids_per_cluster.remove(duplicate)
+
+
 def detect_clusters(db):
     embeddings_data = get_all_embeddings()
-
     articles_ids_per_cluster = query.get_articles_ids_per_cluster(db)
+    delete_duplicates(articles_ids_per_cluster)
     current_clusters = [[(str(article_id), embeddings_data.get(str(article_id))) for article_id in articles_cluster] for articles_cluster in articles_ids_per_cluster]
     if not current_clusters:
         current_clusters = []
@@ -69,10 +89,14 @@ def refresh_info_clusters():
         info_cluster = db.query(InfoCluster).get(info_cluster_id)
         if nothing_changed_in_info_cluster(info_cluster, cluster):
             continue
-        if not info_cluster:
+        ids_already_in_some_cluster = query.get_str_articles_ids_already_in_cluster(db)
+        if not info_cluster and cluster[0][0] not in ids_already_in_some_cluster and cluster[1][0] not in ids_already_in_some_cluster:
             info_cluster = create_new_info_cluster(info_cluster_id)
+        else:
+            continue
         cluster_updated = update_info_cluster(info_cluster, cluster, db)
         print(info_cluster.title)
+        print("cluster_updated", cluster_updated)
         if cluster_updated:
             db.merge(info_cluster)
             db.commit()

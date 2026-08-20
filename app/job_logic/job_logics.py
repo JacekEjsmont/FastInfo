@@ -22,8 +22,8 @@ def run_add_articles_and_clusters_job() -> dict[str, object]:
     return results
 
 
-def run_delete_6_days_old_call_job(db):
-    articles_ids_to_delete = query.get_articles_ids_older_than_6_days(db)
+def run_delete_old_call_job(db):
+    articles_ids_to_delete = query.get_articles_ids_older_than(db, 4)
     if not articles_ids_to_delete:
         return 0
     vector_store.delete_embeddings_by_ids([str(art_id) for art_id in articles_ids_to_delete])
