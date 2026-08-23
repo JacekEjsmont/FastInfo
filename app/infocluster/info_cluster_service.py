@@ -92,10 +92,11 @@ def refresh_info_clusters():
         ids_already_in_some_cluster = query.get_str_articles_ids_already_in_cluster(db)
         if not info_cluster and cluster[0][0] not in ids_already_in_some_cluster and cluster[1][0] not in ids_already_in_some_cluster:
             info_cluster = create_new_info_cluster(info_cluster_id)
-        cluster_updated = update_info_cluster(info_cluster, cluster, db)
-        print(info_cluster.title)
-        print("cluster_updated", cluster_updated)
-        if cluster_updated:
-            db.merge(info_cluster)
-            db.commit()
+        if info_cluster:
+            cluster_updated = update_info_cluster(info_cluster, cluster, db)
+            print(info_cluster.title)
+            print("cluster_updated", cluster_updated)
+            if cluster_updated:
+                db.merge(info_cluster)
+                db.commit()
     db.close()
