@@ -89,7 +89,13 @@ def get_info_clusters_recent(db: Session):
     )
 
 def get_info_clusters_size_1(db: Session):
-    return db.query(InfoCluster).where(InfoCluster.articles.size == 1).all()
+    return (
+        db.query(InfoCluster)
+        .join(info_clusters_articles, InfoCluster.id == info_clusters_articles.c.infocluster_id)
+        .group_by(InfoCluster.id)
+        .having(func.count(func.distinct(info_clusters_articles.c.article_id)) == 1)
+        .all()
+    )
 
 def get_info_clusters_recent_with_counts(db: Session):
     thumb_subq = (
