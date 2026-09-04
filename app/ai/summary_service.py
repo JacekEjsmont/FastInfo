@@ -41,8 +41,9 @@ def create_article_summary(text):
         {"role": "user", "content": f"""Artykuł: {text}"""},
     ]
     response = client.responses.create(
-        model="gpt-5.6-luna",
+        model="gpt-5-nano",
         timeout=180,
+        reasoning={"effort": "low"},
         input=prompt_messages
     )
     return response.output_text
