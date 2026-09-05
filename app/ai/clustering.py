@@ -1,7 +1,7 @@
 
 from scipy.spatial import distance
 
-def cluster_by_similarity(embeddings_data, threshold=0.30, clusters=[]):
+def cluster_by_similarity(embeddings_data, threshold=0.31, clusters=[]):
     """ Groups embeddings of articles by their similarity scores
     :param clusters: cluster to start with. Default is empty
     :param threshold: bigger value means less similar articles. Lower more similar
