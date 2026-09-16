@@ -28,7 +28,7 @@ topic: kategoria artykułu. Dopasuj kategorie na podstawie tej mapy: {str(MAP_OF
 claims: zgłoszone faktyczne stwierdzenia.
 
 Dodatkowe reguły:
-- Używaj tylko informacji zawartych w artykule
+- Używaj tylko informacji zawartych w artykule. Nie dodawaj nic od siebie. Uważaj aby nie przekręcić znaczenia zdań.
 - nie spekuluj
 - niech pole "claims" będzie bardzo krótkie 
 - unikaj zwrotów "W artykule" "według artykułu" itd
@@ -41,9 +41,8 @@ def create_article_summary(text):
         {"role": "user", "content": f"""Artykuł: {text}"""},
     ]
     response = client.responses.create(
-        model="gpt-5-nano",
+        model="gpt-5.6-luna",
         timeout=180,
-        reasoning={"effort": "high"},
         input=prompt_messages
     )
     return response.output_text
