@@ -6,6 +6,7 @@ from pinecone import Pinecone
 PINECONE_NAME = "Pinecone"
 USED_VECTOR_DB = PINECONE_NAME
 INDEX_NAME = "fast-info-openai-index"
+# INDEX_NAME = "fast-info-openai-index-2" # For Testing
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=PINECONE_API_KEY)

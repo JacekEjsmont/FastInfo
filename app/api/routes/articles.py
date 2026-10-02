@@ -11,6 +11,11 @@ def ingest():
     ingest_articles()
     return {"status": "ingested"}
 
+@router.post("/ingest_local")
+def ingest_local():
+    ingest_articles(local=True)
+    return {"status": "ingested"}
+
 @router.get("/all_articles")
 def all_articles(db: Session = Depends(get_db)):
     return query.get_all_articles(db)

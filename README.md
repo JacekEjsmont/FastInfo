@@ -14,3 +14,6 @@ In order launch working app there need to be .env file configured with keys for:
     
     #Api key to pinecone
     PINECONE_API_KEY=
+
+
+More info about using app in docs.txt   

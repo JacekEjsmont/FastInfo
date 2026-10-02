@@ -1,0 +1,44 @@
+import ollama
+
+MAP_OF_TOPIC = {"Nauka i Technologie" : "Wszystko co związane Nauką, Technologią, Wynalazkami, AI, IT, Robotyką itd na świecie i w Polsce",
+                "Społeczeństwo" : "Tematy dotyczące społeczeństwa i życia w polsce i na świecie",
+                "Polityka i Prawo" : "Tematy dotyczące Polityki wewnątrz Polski i Prawa w Polsce",
+                "Gospodarka i Biznes" : "Tematy dotyczące Gospodarki biznesu i finansów",
+                "Geopolityka i Konflikty zbrojne" : "Informacje dotyczące Geopolityki, Polityki Globalnej i Konfliktów zbrojnych",
+                "Ze Świata" : "Wydarzenia polityczne i nie polityczne tylko po za Polską nie pasujące do kategorii Geopolityka i Konflikty zbrojne jak i Gospodarka i Biznes, Nauka",
+                "Wydarzenia z Polski" : "Wydarzenia z Polski nie związane z polityką, gospodarką, biznezem, prawem, finansami, nauką",
+                "Sport" : "Wydarzenia sportowe z Polski i ze Świata",
+                "Kataklizmy" : "Kataklizmy w polsce i na świecie",
+                "Środowisko i Klimat" : "Wydarzenia związane z klimatem i środowiskiem, pogodą w polsce i na świecie",
+                "Kultura i Rozrywka" : "Kwestie związane z kulturą i rozrywką w polsce i na świecie",
+                }
+LIST_OF_TOPICS = ["Nauka i Technologie", "Społeczeństwo", "Geopolityka i Konflikty zbrojne", "Ze Świata", "Polityka i Prawo", "Gospodarka i Biznes", "Wydarzenia z Polski", "Sport", "Środowisko i Klimat", "Kultura i Rozrywka", "Kataklizmy"]
+
+context = f"""Jesteś profesjonalnym redaktorem wiadomości, Wyciągnij z artykułu dane i stwórz strukture.
+Zwróć JSON z polami:
+summary_pl: zwięzłe streszczenie artykułu, zachowaj kluczowe fakty i kontekst i skup się na najważniejszych informacjach, maksymalnie 4–5 zdań.
+title: tytuł dla stworzonego streszczenia.
+topic: kategoria artykułu. Dopasuj kategorie na podstawie tej mapy: {str(MAP_OF_TOPIC)}. Gdzie klucz mapy to kategoria a wartość mapy to wytyczne do przydzielania kategorii.
+claims: zgłoszone faktyczne stwierdzenia.
+
+Dodatkowe reguły:
+- Używaj tylko informacji zawartych w artykule. Nie dodawaj nic od siebie. Uważaj aby nie przekręcić znaczenia zdań.
+- nie spekuluj
+- unikaj zwrotów "W artykule" "według artykułu" itd
+- zwróć tylko i wyłącznie poprawny JSON
+- jeśli zauważysz brak treści artykułu, nic nie analizuj i nie streszczaj tylko zwróć pusty JSON"""
+
+
+def create_article_summary(text):
+    prompt_messages = [
+    {"role": "system", "content": context},
+    {"role": "user", "content":"Artykuł: {" + text + "}"},
+    ]
+    resp = ollama.chat(
+        model="bielik-11",
+        messages=prompt_messages,
+        options={"num_ctx": 8192, "temperature": 0.2},
+    )
+    resp_cont = resp.message.content
+    # print(resp_cont)
+    return resp_cont

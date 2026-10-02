@@ -13,6 +13,11 @@ def process_info_clusters():
     refresh_info_clusters()
     return {"status": "info clusters processed"}
 
+@router.post("/process_info_clusters_local")
+def process_info_clusters_local():
+    refresh_info_clusters(local=True)
+    return {"status": "info clusters processed"}
+
 @router.get("/all_info_clusters")
 def all_info_clusters(db: Session = Depends(get_db)):
     return query.get_all_info_clusters(db)

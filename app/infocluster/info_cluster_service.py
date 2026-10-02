@@ -1,6 +1,7 @@
 from app.ai.vector_store import get_all_embeddings
 from app.ai.clustering import cluster_by_similarity
-from app.ai.info_cluster_analysis_service import cluster_ai_analysis
+from app.ai import info_cluster_analysis_service
+from app.ai import info_cluster_analysis_service_local_bielik
 from app.db.database import SessionLocal
 from app.db.models import InfoCluster, Article
 from app.db import query
@@ -54,7 +55,7 @@ def create_new_info_cluster(info_cluster_id):
     info_cluster = InfoCluster(title="Title placeholder", id=info_cluster_id)
     return info_cluster
 
-def update_info_cluster(info_cluster, cluster, db):
+def update_info_cluster(info_cluster, cluster, db, local):
     articles_in_info_cluster = []
     for article_emb_record in cluster:
         article_id = article_emb_record[0]
@@ -67,15 +68,22 @@ def update_info_cluster(info_cluster, cluster, db):
             info_cluster.articles.append(article)
     if len(articles_in_info_cluster) == 0:
         return False
-    info_cluster_data_raw_string = cluster_ai_analysis(articles_in_info_cluster)
+    info_cluster_data_raw_string = ""
+    if local:
+        info_cluster_data_raw_string = info_cluster_analysis_service_local_bielik.cluster_ai_analysis(articles_in_info_cluster)
+    else:
+        info_cluster_data_raw_string = info_cluster_analysis_service.cluster_ai_analysis(articles_in_info_cluster)
+
     info_cluster_data = json.loads(info_cluster_data_raw_string)
+    if not info_cluster:
+        return False
     info_cluster.title = info_cluster_data.get("title")
     info_cluster.summary = info_cluster_data.get("summary_pl")
     info_cluster.updated_at = datetime.datetime.utcnow()
     return True
 
 
-def refresh_info_clusters():
+def refresh_info_clusters(local=False):
     """first function in flow of creating info clusters"""
     db = SessionLocal()
     clusters = detect_clusters(db)
@@ -93,7 +101,7 @@ def refresh_info_clusters():
         if not info_cluster and cluster[0][0] not in ids_already_in_some_cluster and cluster[1][0] not in ids_already_in_some_cluster:
             info_cluster = create_new_info_cluster(info_cluster_id)
         if info_cluster:
-            cluster_updated = update_info_cluster(info_cluster, cluster, db)
+            cluster_updated = update_info_cluster(info_cluster, cluster, db, local)
             print(info_cluster.title)
             print("cluster_updated", cluster_updated)
             if cluster_updated:

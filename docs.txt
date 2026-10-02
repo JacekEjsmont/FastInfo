@@ -1,9 +1,20 @@
-Launch app with uvicorn app.main:app --reload
-
+Launch app with -> uvicorn app.main:app --reload
+home url = http://127.0.0.1:8000/ui
 
 Creating infos jobs flow:
 1. articles/ingest  -> hits rrs for getting articles, then gets content of articles, shots ai to create summary etc     curl.exe -X POST "http://127.0.0.1:8000/articles/ingest" ` -H "Content-Type: application/json"
+1. articles/ingest_local  -> the same as above but with local model                                                     curl.exe -X POST "http://127.0.0.1:8000/articles/ingest_local" ` -H "Content-Type: application/json"
 2. embed/embed  -> embedding articles in database                                                                       curl.exe -X POST "http://127.0.0.1:8000/embed/embed" ` -H "Content-Type: application/json"
 3. infos/process_info_clusters -> groups articles                                                                       curl.exe -X POST "http://127.0.0.1:8000/infos/process_info_clusters" ` -H "Content-Type: application/json"
-job/run_add_articles_and_clusters ->  job which automatically runs tasks 1. 2. 3.                                       curl.exe -X POST "http://127.0.0.1:8000/job/run_add_articles_and_clusters" ` -H "Content-Type: application/json"
+3. infos/process_info_clusters_local -> the same as above but with local model                                          curl.exe -X POST "http://127.0.0.1:8000/infos/process_info_clusters_local" ` -H "Content-Type: application/json"
+job/run_add_articles_and_clusters ->  job which automatically runs tasks 1. 2.                                          curl.exe -X POST "http://127.0.0.1:8000/job/run_add_articles_and_clusters" ` -H "Content-Type: application/json"
+job/run_add_articles_and_clusters_local ->  the same as above but with local model but also with step 3.                curl.exe -X POST "http://127.0.0.1:8000/job/run_add_articles_and_clusters_local" ` -H "Content-Type: application/json"
 deletes articles and connected to them embeddings and infoclusters if some empty.                                       curl.exe -X DELETE "http://127.0.0.1:8000/job/run_delete_old" ` -H "Content-Type: application/json"
+
+ollama run hf.co/speakleash/Bielik-4.5B-v3.0-Instruct-GGUF:Q8_0                                                         downloads model from hf # Q8_0 means quantization to q8
+ollama create bielik-45 -f Modelfile                                                                                    creates local model with settings from  Modelfile
+ollama run bielik-45                                                                                                    starts local model with settings from Modelfile
+ollama stop bielik-45                                                                                                   stop model from another terminal window
+ollama ps                                                                                                               shows active models
+
+ollama run bielik-11                                                                                                    starts model which is used now for replacement for gpt

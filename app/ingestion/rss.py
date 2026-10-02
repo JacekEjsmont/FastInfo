@@ -1,9 +1,5 @@
 import feedparser
 
-RSS_FEEDS = [
-    "http://feeds.bbci.co.uk/news/rss.xml",
-    "https://rss.cnn.com/rss/edition.rss"
-]
 RSS_FEEDS_URLS = [
     # "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/technology/rss.xml",
     # "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/front_page/rss.xml",
@@ -16,6 +12,9 @@ RSS_FEEDS_URLS_2 = [
     # "https://www.rp.pl/rss/gospodarka.xml",
     # "https://www.rp.pl/rss/opinie.xml",
     "https://www.rp.pl/rss_main",
+    "https://www.osw.waw.pl/rss.xml",
+    "https://defence24.pl/_rss",
+    # "https://www.sport.pl/pub/rss/sport.xml",
     # "https://www.rp.pl/rss/finanse.xml"
 ]
 

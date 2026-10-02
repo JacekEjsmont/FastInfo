@@ -10,7 +10,7 @@ def run_add_articles_and_clusters_job() -> dict[str, object]:
     steps = [
         ("articles_ingest", "/articles/ingest"),
         ("embed_articles", "/embed/embed"),
-        ("process_info_clusters", "/infos/process_info_clusters"),
+        # ("process_info_clusters", "/infos/process_info_clusters"), Kosztuje za dużo z Chatem GPT. Lepiej wykonywać tylko na lokalnym modelu
     ]
 
     results: dict[str, object] = {}
@@ -20,6 +20,24 @@ def run_add_articles_and_clusters_job() -> dict[str, object]:
         results[step_name] = response.json()
 
     return results
+
+def run_add_articles_and_clusters_job_local() -> dict[str, object]:
+    base_url = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+    steps = [
+        ("articles_ingest", "/articles/ingest_local"),
+        ("embed_articles", "/embed/embed"),
+        ("process_info_clusters", "/infos/process_info_clusters_local"),
+    ]
+
+    results: dict[str, object] = {}
+    for step_name, path in steps:
+        response = requests.post(f"{base_url}{path}", timeout=900, headers={"Content-Type": "application/json", "User-Agent": "Google-Cloud-Scheduler"})
+        response.raise_for_status()
+        results[step_name] = response.json()
+
+    return results
+
 
 
 def run_delete_old_call_job(db):

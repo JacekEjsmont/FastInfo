@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from typing import Generator
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./news.db")
+# DATABASE_URL = "sqlite:///./news.db" # For Testing
 
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)

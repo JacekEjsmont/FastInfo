@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.job_logic.job_logics import run_add_articles_and_clusters_job, run_delete_old_call_job
+from app.job_logic.job_logics import run_add_articles_and_clusters_job, run_delete_old_call_job, run_add_articles_and_clusters_job_local
 
 router = APIRouter(prefix="/job")
 
@@ -9,6 +9,11 @@ router = APIRouter(prefix="/job")
 def run_add_articles_and_clusters_call():
     run_add_articles_and_clusters_job()
     return {"status": "run_add_articles_and_clusters_job completed"}
+
+@router.post("/run_add_articles_and_clusters_local")
+def run_add_articles_and_clusters_local_call():
+    run_add_articles_and_clusters_job_local()
+    return {"status": "run_add_articles_and_clusters_job_local completed"}
 
 @router.delete("/run_delete_old")
 def run_delete_old_call(db: Session = Depends(get_db)):
