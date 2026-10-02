@@ -1,5 +1,4 @@
 import json
-from operator import itemgetter
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
