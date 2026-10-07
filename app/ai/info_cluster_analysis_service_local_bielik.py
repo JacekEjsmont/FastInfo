@@ -25,6 +25,8 @@ def cluster_ai_analysis(articles_in_info_cluster):
         {"role": "developer", "content": context},
         {"role": "user", "content": f"""Json string z danymi: {base_fine_tune_data.cluster_input_2}"""},
         {"role": "assistant", "content": base_fine_tune_data.cluster_output_2},
+        {"role": "user", "content": f"""Json string z danymi: {base_fine_tune_data.cluster_input_3}"""},
+        {"role": "assistant", "content": base_fine_tune_data.cluster_output_3},
         {"role": "user", "content": f"""Json string z danymi: {json.dumps(claims_json)}"""},
     ]
     resp = ollama.chat(

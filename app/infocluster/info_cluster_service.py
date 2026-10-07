@@ -108,3 +108,22 @@ def refresh_info_clusters(local=False):
                 db.merge(info_cluster)
                 db.commit()
     db.close()
+
+
+def get_possible_clusters(db):
+    articles_embeddings = get_all_embeddings()
+    articles_ids_per_cluster = query.get_articles_ids_per_cluster(db)
+    current_clusters = [[(str(article_id), articles_embeddings.get(str(article_id))) for article_id in articles_cluster]
+                        for
+                        articles_cluster in articles_ids_per_cluster]
+    info_clusters_first_run = cluster_by_similarity(articles_embeddings, clusters=current_clusters)
+    info_clusters = cluster_by_similarity(articles_embeddings, clusters=info_clusters_first_run)
+    only_clusters = [cluster for cluster in info_clusters if len(cluster) >= 2]
+    clusters_transformed = []
+    for cluster in only_clusters:
+        article_id_to_article = {}
+        for article in cluster:
+            article_id = article[0]
+            article_id_to_article[article_id] = query.get_article_by_id(int(article_id), db)
+        clusters_transformed.append(article_id_to_article)
+    return clusters_transformed
