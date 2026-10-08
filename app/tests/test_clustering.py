@@ -3,7 +3,6 @@ from app.ai.clustering import cluster_by_similarity
 import data_for_testing
 
 
-
 def test_cluster_for_similar_subjects():
     embeddings_data = data_for_testing.embeddings_data_1
     result = cluster_by_similarity(embeddings_data)
