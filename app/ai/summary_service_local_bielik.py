@@ -40,5 +40,4 @@ def create_article_summary(text):
         options={"num_ctx": 8192, "temperature": 0.2},
     )
     resp_cont = resp.message.content
-    # print(resp_cont)
     return resp_cont

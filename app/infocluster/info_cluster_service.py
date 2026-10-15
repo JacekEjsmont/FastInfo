@@ -93,7 +93,7 @@ def refresh_info_clusters(local=False):
             continue
         if cluster[0][0] == cluster[1][0]:
             continue
-        info_cluster_id = cluster[0][0] + "_" + cluster[1][0]
+        info_cluster_id = cluster[0][0] + cluster[1][0]
         info_cluster = db.query(InfoCluster).get(info_cluster_id)
         if nothing_changed_in_info_cluster(info_cluster, cluster):
             continue
