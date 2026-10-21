@@ -3,9 +3,11 @@ import os
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from typing import Generator
+from dotenv import load_dotenv
 
+load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./news.db")
-# DATABASE_URL = "sqlite:///./news.db" # For Testing
+# DATABASE_URL = "sqlite:///./news.db" # For Testing todo comment and uncomment above
 
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)

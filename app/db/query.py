@@ -3,7 +3,7 @@ import datetime
 
 from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session
-from app.db.models import Article, InfoCluster, info_clusters_articles
+from app.db.models import Article, InfoCluster, info_clusters_articles, ArticleEvaluation
 from app.db.database import SessionLocal, delete
 from app.ai import vector_store
 
@@ -11,6 +11,11 @@ def get_all_articles(db: Session):
     q = db.query(Article)
     all_art = q.filter(Article.id.isnot(None)).all()
     return all_art
+
+def get_all_articles_count(db: Session):
+    q = db.query(Article)
+    all_art_num = q.count()
+    return all_art_num
 
 def get_article_by_id(article_id: int, db: Session):
     return db.get(Article, article_id)
@@ -157,6 +162,33 @@ def get_articles_ids_older_than(db: Session, days: int):
         .order_by(desc(Article.published_at))
     ).all()
 
+def get_articles_not_evaluated_yet(db: Session):
+    return db.query(Article).outerjoin(ArticleEvaluation).filter(ArticleEvaluation.article_id == None).all()
+
+def get_all_articles_evaluations(db: Session):
+    q = db.query(ArticleEvaluation)
+    all_art_eval = q.filter(ArticleEvaluation.id.isnot(None)).all()
+    return all_art_eval
+
+def get_all_articles_evaluations_count(db: Session):
+    q = db.query(ArticleEvaluation)
+    all_art_eval_count = q.count()
+    return all_art_eval_count
+
+def get_false_evaluations(db: Session):
+    q = db.query(ArticleEvaluation)
+    false_evals = q.filter(ArticleEvaluation.is_model_evaluation_positive == False).all()
+    return false_evals
+
+def delete_article_evals_with_ids(article_evals_ids, db: Session):
+    query = db.query(ArticleEvaluation).filter(ArticleEvaluation.id.in_(article_evals_ids))
+    query.delete(synchronize_session=False)
+    db.commit()
+
+def delete_all_evals(db: Session):
+    query = db.query(ArticleEvaluation).filter(ArticleEvaluation.id.isnot(None))
+    query.delete()
+    db.commit()
 def execute_query(query: str):
     with SessionLocal() as db:
         db.execute(text(query))

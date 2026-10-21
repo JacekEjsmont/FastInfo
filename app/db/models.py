@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime,  Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, Table, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 import datetime
@@ -40,3 +40,11 @@ class InfoCluster(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow)
     articles = relationship("Article", secondary="info_clusters_articles", back_populates="infoclusters")
     summary = Column(Text, nullable=True)
+
+class ArticleEvaluation(Base):
+    __tablename__ = "articleevaluations"
+    id = Column(Integer, primary_key=True, index=True)
+    article_id = Column(Integer, ForeignKey("articles.id"))
+    model_evaluation = Column(Text)
+    is_model_evaluation_positive = Column(Boolean, default=None)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

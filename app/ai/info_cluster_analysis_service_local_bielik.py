@@ -1,6 +1,6 @@
 import ollama
 import json
-from app.ai import base_fine_tune_data
+from app.ai import few_shot_classification_data
 
 context = """Dostaniesz json string o strukturze: {claims:[]} Pole 'claims będzie zawierać liste z informacjami z artykułów gazet.
 Zwróć JSON {summary_pl: "", title: ""} gdzie:
@@ -23,10 +23,10 @@ def cluster_ai_analysis(articles_in_info_cluster):
     print(json.dumps(claims_json))
     prompt_messages = [
         {"role": "developer", "content": context},
-        {"role": "user", "content": f"""Json string z danymi: {base_fine_tune_data.cluster_input_2}"""},
-        {"role": "assistant", "content": base_fine_tune_data.cluster_output_2},
-        {"role": "user", "content": f"""Json string z danymi: {base_fine_tune_data.cluster_input_3}"""},
-        {"role": "assistant", "content": base_fine_tune_data.cluster_output_3},
+        {"role": "user", "content": f"""Json string z danymi: {few_shot_classification_data.cluster_input_2}"""},
+        {"role": "assistant", "content": few_shot_classification_data.cluster_output_2},
+        {"role": "user", "content": f"""Json string z danymi: {few_shot_classification_data.cluster_input_3}"""},
+        {"role": "assistant", "content": few_shot_classification_data.cluster_output_3},
         {"role": "user", "content": f"""Json string z danymi: {json.dumps(claims_json)}"""},
     ]
     resp = ollama.chat(

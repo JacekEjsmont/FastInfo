@@ -52,7 +52,7 @@ def nothing_changed_in_info_cluster(info_cluster, cluster):
     return True
 
 def create_new_info_cluster(info_cluster_id):
-    info_cluster = InfoCluster(title="Title placeholder", id=info_cluster_id)
+    info_cluster = InfoCluster(title="Title placeholder", additional_id=info_cluster_id)
     return info_cluster
 
 def update_info_cluster(info_cluster, cluster, db, local):
@@ -93,8 +93,9 @@ def refresh_info_clusters(local=False):
             continue
         if cluster[0][0] == cluster[1][0]:
             continue
-        info_cluster_id = cluster[0][0] + "_" + cluster[1][0]
-        info_cluster = db.query(InfoCluster).get(info_cluster_id)
+        info_cluster_id = str(cluster[0][0] + cluster[1][0])
+        info_cluster = query.get_info_cluster_by_additional_id(info_cluster_id, db)
+
         if nothing_changed_in_info_cluster(info_cluster, cluster):
             continue
         ids_already_in_some_cluster = query.get_str_articles_ids_already_in_cluster(db)
