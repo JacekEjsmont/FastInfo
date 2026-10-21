@@ -11,6 +11,9 @@ job/run_add_articles_and_clusters ->  job which automatically runs tasks 1. 2.  
 job/run_add_articles_and_clusters_local ->  the same as above but with local model but also with step 3.                curl.exe -X POST "http://127.0.0.1:8000/job/run_add_articles_and_clusters_local" ` -H "Content-Type: application/json"
 deletes articles and connected to them embeddings and infoclusters if some empty.                                       curl.exe -X DELETE "http://127.0.0.1:8000/job/run_delete_old" ` -H "Content-Type: application/json"
 
+evaluate faithfulness                                                                                                   curl.exe -X POST "http://127.0.0.1:8000/evaluation/evaluate_articles_faithfulness" ` -H "Content-Type: application/json"
+evaluate faithfulness by chunks                                                                                         curl.exe -X POST "http://127.0.0.1:8000/evaluation/evaluate_articles_by_chunks" ` -H "Content-Type: application/json"
+
 ollama run hf.co/speakleash/Bielik-4.5B-v3.0-Instruct-GGUF:Q8_0                                                         downloads model from hf # Q8_0 means quantization to q8
 ollama create bielik-45 -f Modelfile                                                                                    creates local model with settings from  Modelfile
 ollama run bielik-45                                                                                                    starts local model with settings from Modelfile
