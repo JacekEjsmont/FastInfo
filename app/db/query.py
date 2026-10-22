@@ -97,6 +97,7 @@ def get_articles_without_info_cluster(db: Session):
     return (
         db.query(Article)
         .filter(~Article.infoclusters.any())
+        .filter(Article.published.is_distinct_from(False))
         .order_by(desc(Article.published_at))
         .all()
     )
