@@ -7,8 +7,7 @@ from app.ai import summary_service_local_bielik
 from sqlalchemy import or_
 import json
 
-def ingest_articles(local=False):
-    db = SessionLocal()
+def ingest_articles(local=False, db=SessionLocal()):
     print("fetching articles...")
     rss_articles = fetch_rss_articles()
 
@@ -41,6 +40,7 @@ def ingest_articles(local=False):
             url=item["url"],
             topic=article_ai_data.get("topic"),
             claims=json.dumps(article_ai_data.get("claims")),
+            published = False,
         )
         db.add(article)
         db.commit()

@@ -28,6 +28,7 @@ class Article(Base):
     topic = Column(Text)
     claims = Column(Text)
     uncertainties = Column(Text)
+    published = Column(Boolean, default=None)
     infoclusters  = relationship("InfoCluster", secondary="info_clusters_articles", back_populates="articles")
 
 

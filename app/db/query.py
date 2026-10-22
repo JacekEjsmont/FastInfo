@@ -25,7 +25,7 @@ def get_articles_not_embedded_yet():
         q = db.query(Article)
         ids_already_embedded = vector_store.get_all_embedding_ids()
         articles = q.filter(~Article.id.in_(ids_already_embedded)).all()
-        return articles
+        return [a for a in articles if a.published != False]
 
 def delete_all_articles():
     stmt = delete(Article).where(Article.id.isnot(None))
@@ -163,7 +163,8 @@ def get_articles_ids_older_than(db: Session, days: int):
     ).all()
 
 def get_articles_not_evaluated_yet(db: Session):
-    return db.query(Article).outerjoin(ArticleEvaluation).filter(ArticleEvaluation.article_id == None).all()
+    articles = db.query(Article).outerjoin(ArticleEvaluation).filter(ArticleEvaluation.article_id == None).all()
+    return [a for a in articles if a.published != None] #added to avoid old articles added before evaluation functionality
 
 def get_all_articles_evaluations(db: Session):
     q = db.query(ArticleEvaluation)
@@ -189,6 +190,17 @@ def delete_all_evals(db: Session):
     query = db.query(ArticleEvaluation).filter(ArticleEvaluation.id.isnot(None))
     query.delete()
     db.commit()
+
+def update_article_publish_status(db: Session):
+    articles_that_should_have_different_publish_status = (db.query(Article, ArticleEvaluation)
+                                                          .join(ArticleEvaluation, Article.id == ArticleEvaluation.article_id)
+                                                          .where(Article.published.is_distinct_from(ArticleEvaluation.is_model_evaluation_positive))
+                                                          .all())
+    for article_and_eval in articles_that_should_have_different_publish_status:
+        article_and_eval[0].published = article_and_eval[1].is_model_evaluation_positive
+        db.commit()
+    return len(articles_that_should_have_different_publish_status)
+
 def execute_query(query: str):
     with SessionLocal() as db:
         db.execute(text(query))

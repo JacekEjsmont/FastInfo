@@ -26,6 +26,8 @@ def run_add_articles_and_clusters_job_local() -> dict[str, object]:
 
     steps = [
         ("articles_ingest", "/articles/ingest_local"),
+        ("articles_evaluation", "/evaluation/evaluate_articles_faithfulness"),
+        ("articles_status_update", "/articles/update_publish_status"),
         ("embed_articles", "/embed/embed"),
         ("process_info_clusters", "/infos/process_info_clusters_local"),
     ]
